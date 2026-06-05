@@ -33,11 +33,11 @@ export default function App() {
       const savedStr = localStorage.getItem('big_game_vfx_tracks_v1');
       if (savedStr) {
         let saved = JSON.parse(savedStr) as AudioTrack[];
-        // Clean up: delete all sounds in Stacking Blocks except the bomb ticking sound, phone sound, PROXIE - Bad Shawty, YOASOBI, and ซากกน (사기꾼)
-        saved = saved.filter(t => t.station !== 'Stacking Blocks' || t.id === 'sb-bomb-timer' || t.id === 'sb-phone-sound' || t.id === 'sb-proxie-bad-shawty' || t.id === 'sb-yoasobi' || t.id === 'sb-sagikkun');
+        // Clean up: delete all sounds in Stacking Blocks except the bomb ticking sound, phone sound, PROXIE - Bad Shawty, YOASOBI, ซากกน (사기꾼), Correct/Wrong Dings, and STAY/Seven
+        saved = saved.filter(t => t.station !== 'Stacking Blocks' || t.id === 'sb-bomb-timer' || t.id === 'sb-phone-sound' || t.id === 'sb-proxie-bad-shawty' || t.id === 'sb-yoasobi' || t.id === 'sb-sagikkun' || t.id === 'sb-correct-ding' || t.id === 'sb-wrong-ding' || t.id === 'sb-stay' || t.id === 'sb-seven');
 
-        // Clean up: delete all sounds in The Money Drop except the intro, the million pound drop timer, PROXIE - Bad Shawty, YOASOBI, and ซากกน (사기꾼)
-        saved = saved.filter(t => t.station !== 'The Money Drop' || t.id === 'md-intro' || t.id === 'md-timer' || t.id === 'md-proxie-bad-shawty' || t.id === 'md-yoasobi' || t.id === 'md-sagikkun');
+        // Clean up: delete all sounds in The Money Drop except the intro, the million pound drop timer, PROXIE - Bad Shawty, YOASOBI, ซากกน (사기꾼), Correct/Wrong Dings, and STAY/Seven
+        saved = saved.filter(t => t.station !== 'The Money Drop' || t.id === 'md-intro' || t.id === 'md-timer' || t.id === 'md-proxie-bad-shawty' || t.id === 'md-yoasobi' || t.id === 'md-sagikkun' || t.id === 'md-correct-ding' || t.id === 'md-wrong-ding' || t.id === 'md-stay' || t.id === 'md-seven');
 
         // Clean up: delete tracks 1-3 if present (Attention Horn, Start Round Whistle, Base Cleared Level Fanfare)
         saved = saved.filter(t => 

@@ -7,6 +7,26 @@ import { AudioTrack } from './types';
 
 export const INITIAL_TRACKS: AudioTrack[] = [
   {
+    id: 'sb-correct-ding',
+    title: 'Correct Ding',
+    duration: '00:02',
+    durationSeconds: 2,
+    url: '/Correct Ding.mp3',
+    station: 'Stacking Blocks',
+    category: 'Morning Game',
+    tags: ['SFX', 'Ding', 'Correct']
+  },
+  {
+    id: 'sb-wrong-ding',
+    title: 'Wrong Ding',
+    duration: '00:02',
+    durationSeconds: 2,
+    url: '/Wrong Ding.mp3',
+    station: 'Stacking Blocks',
+    category: 'Morning Game',
+    tags: ['SFX', 'Ding', 'Wrong']
+  },
+  {
     id: 'sb-bomb-timer',
     title: 'Bomb Timer (Bomb Ticking Sound)',
     duration: '02:00',
@@ -57,6 +77,46 @@ export const INITIAL_TRACKS: AudioTrack[] = [
     tags: ['Music', 'Meme', 'Song']
   },
   {
+    id: 'sb-stay',
+    title: 'Justin Bieber - STAY',
+    duration: '02:21',
+    durationSeconds: 141,
+    url: '/Justin Bieber - STAY.mp3',
+    station: 'Stacking Blocks',
+    category: 'Morning Game',
+    tags: ['Music', 'Song', 'Pop']
+  },
+  {
+    id: 'sb-seven',
+    title: "정국 (Jung Kook) - Seven (feat. Latto)",
+    duration: '03:04',
+    durationSeconds: 184,
+    url: "/정국 (Jung Kook) 'Seven (feat. Latto)' Official MV.mp3",
+    station: 'Stacking Blocks',
+    category: 'Morning Game',
+    tags: ['Music', 'Song', 'Pop']
+  },
+  {
+    id: 'md-correct-ding',
+    title: 'Correct Ding',
+    duration: '00:02',
+    durationSeconds: 2,
+    url: '/Correct Ding.mp3',
+    station: 'The Money Drop',
+    category: 'Morning Game',
+    tags: ['SFX', 'Ding', 'Correct']
+  },
+  {
+    id: 'md-wrong-ding',
+    title: 'Wrong Ding',
+    duration: '00:02',
+    durationSeconds: 2,
+    url: '/Wrong Ding.mp3',
+    station: 'The Money Drop',
+    category: 'Morning Game',
+    tags: ['SFX', 'Ding', 'Wrong']
+  },
+  {
     id: 'md-intro',
     title: 'Intro to The Money Drop',
     duration: '00:30',
@@ -105,5 +165,25 @@ export const INITIAL_TRACKS: AudioTrack[] = [
     station: 'The Money Drop',
     category: 'Morning Game',
     tags: ['Music', 'Meme', 'Song']
+  },
+  {
+    id: 'md-stay',
+    title: 'Justin Bieber - STAY',
+    duration: '02:21',
+    durationSeconds: 141,
+    url: '/Justin Bieber - STAY.mp3',
+    station: 'The Money Drop',
+    category: 'Morning Game',
+    tags: ['Music', 'Song', 'Pop']
+  },
+  {
+    id: 'md-seven',
+    title: "정국 (Jung Kook) - Seven (feat. Latto)",
+    duration: '03:04',
+    durationSeconds: 184,
+    url: "/정국 (Jung Kook) 'Seven (feat. Latto)' Official MV.mp3",
+    station: 'The Money Drop',
+    category: 'Morning Game',
+    tags: ['Music', 'Song', 'Pop']
   }
 ];
