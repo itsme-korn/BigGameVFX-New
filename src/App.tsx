@@ -142,7 +142,13 @@ export default function App() {
     setAudioError(null); // Clear errors on channel change
 
     if (activeTrack) {
-      audioRef.current.src = activeTrack.url;
+      let finalUrl = activeTrack.url;
+      if (finalUrl.startsWith('/') && !finalUrl.startsWith('//')) {
+        const baseUrl = (import.meta as any).env?.BASE_URL || '/';
+        const cleanBase = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+        finalUrl = `${cleanBase}${finalUrl}`;
+      }
+      audioRef.current.src = finalUrl;
       audioRef.current.load();
       if (isPlaying) {
         audioRef.current.play().catch((err) => {
