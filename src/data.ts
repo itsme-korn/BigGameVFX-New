@@ -185,5 +185,165 @@ export const INITIAL_TRACKS: AudioTrack[] = [
     station: 'The Money Drop',
     category: 'Morning Game',
     tags: ['Music', 'Song', 'Pop']
+  },
+  {
+    id: 'sl-correct-ding',
+    title: 'Correct Ding',
+    duration: '00:02',
+    durationSeconds: 2,
+    url: '/Correct Ding.mp3',
+    station: 'เกมบันไดงู',
+    category: 'Morning Game',
+    tags: ['SFX', 'Ding', 'Correct']
+  },
+  {
+    id: 'sl-wrong-ding',
+    title: 'Wrong Ding',
+    duration: '00:02',
+    durationSeconds: 2,
+    url: '/Wrong Ding.mp3',
+    station: 'เกมบันไดงู',
+    category: 'Morning Game',
+    tags: ['SFX', 'Ding', 'Wrong']
+  },
+  {
+    id: 'sl-trap1',
+    title: 'Trap 1',
+    duration: '00:03',
+    durationSeconds: 3,
+    url: '/Trap1.mp3',
+    station: 'เกมบันไดงู',
+    category: 'Morning Game',
+    tags: ['SFX', 'Trap', 'Danger']
+  },
+  {
+    id: 'sl-trap2',
+    title: 'Trap 2',
+    duration: '00:03',
+    durationSeconds: 3,
+    url: '/Trap2.mp3',
+    station: 'เกมบันไดงู',
+    category: 'Morning Game',
+    tags: ['SFX', 'Trap', 'Danger']
+  },
+  {
+    id: 'sl-clue',
+    title: 'Clue',
+    duration: '00:04',
+    durationSeconds: 4,
+    url: '/Clue.mp3',
+    station: 'เกมบันไดงู',
+    category: 'Morning Game',
+    tags: ['SFX', 'Clue', 'Hint']
+  },
+  {
+    id: 'sl-cluegold',
+    title: 'Clue Gold',
+    duration: '00:04',
+    durationSeconds: 4,
+    url: '/ClueGold.mp3',
+    station: 'เกมบันไดงู',
+    category: 'Morning Game',
+    tags: ['SFX', 'Clue', 'Reward', 'Gold']
+  },
+  {
+    id: 'sl-marojump',
+    title: 'Maro Jump',
+    duration: '00:02',
+    durationSeconds: 2,
+    url: '/maro-jump-sound-effect_1.mp3',
+    station: 'เกมบันไดงู',
+    category: 'Morning Game',
+    tags: ['SFX', 'Jump', 'Retro']
+  },
+  {
+    id: 'sl-questionbg',
+    title: 'Question BG',
+    duration: '01:30',
+    durationSeconds: 90,
+    url: '/Question BG.mp3',
+    station: 'เกมบันไดงู',
+    category: 'Morning Game',
+    tags: ['Soundtrack', 'BG', 'Tension']
+  },
+  {
+    id: 'sl-questionstart',
+    title: 'Question Start',
+    duration: '00:05',
+    durationSeconds: 5,
+    url: '/Question Start.mp3',
+    station: 'เกมบันไดงู',
+    category: 'Morning Game',
+    tags: ['SFX', 'Intro', 'Start']
+  },
+  {
+    id: 'sl-bomb-timer',
+    title: 'Bomb Timer (Bomb Ticking Sound)',
+    duration: '02:00',
+    durationSeconds: 120,
+    url: '/bomb_timer_ticking.mp3',
+    station: 'เกมบันไดงู',
+    category: 'Morning Game',
+    tags: ['Timer', 'Ticking', 'Suspense']
+  },
+  {
+    id: 'sl-phone-sound',
+    title: 'Phone Sound',
+    duration: '00:10',
+    durationSeconds: 10,
+    url: '/phone_sound.mp3',
+    station: 'เกมบันไดงู',
+    category: 'Morning Game',
+    tags: ['Ring', 'Alert', 'SFX']
+  },
+  {
+    id: 'sl-proxie-bad-shawty',
+    title: 'PROXIE - Bad Shawty',
+    duration: '03:15',
+    durationSeconds: 195,
+    url: '/PROXIE - Bad Shawty.mp3',
+    station: 'เกมบันไดงู',
+    category: 'Morning Game',
+    tags: ['Music', 'Meme', 'Song']
+  },
+  {
+    id: 'sl-yoasobi',
+    title: 'YOASOBI',
+    duration: '03:30',
+    durationSeconds: 210,
+    url: '/YOASOBI.mp3',
+    station: 'เกมบันไดงู',
+    category: 'Morning Game',
+    tags: ['Music', 'Song', 'Pop']
+  },
+  {
+    id: 'sl-sagikkun',
+    title: 'ซากกน (사기꾼) ฉนเปนมจ',
+    duration: '03:00',
+    durationSeconds: 180,
+    url: '/ซากกน (사기꾼) ฉนเปนมจ.mp3',
+    station: 'เกมบันไดงู',
+    category: 'Morning Game',
+    tags: ['Music', 'Meme', 'Song']
+  },
+  {
+    id: 'sl-stay',
+    title: 'Justin Bieber - STAY',
+    duration: '02:21',
+    durationSeconds: 141,
+    url: '/Justin Bieber - STAY.mp3',
+    station: 'เกมบันไดงู',
+    category: 'Morning Game',
+    tags: ['Music', 'Song', 'Pop']
+  },
+  {
+    id: 'sl-seven',
+    title: "정국 (Jung Kook) - Seven (feat. Latto)",
+    duration: '03:04',
+    durationSeconds: 184,
+    url: "/정국 (Jung Kook) 'Seven (feat. Latto)' Official MV.mp3",
+    station: 'เกมบันไดงู',
+    category: 'Morning Game',
+    tags: ['Music', 'Song', 'Pop']
   }
 ];

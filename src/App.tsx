@@ -12,6 +12,7 @@ import UploadModal from './components/UploadModal';
 import { playSynthesizedSound } from './audioSynth';
 import {
   Volume2,
+  VolumeX,
   RefreshCw,
   Sparkles,
   ArrowLeft,
@@ -38,6 +39,9 @@ export default function App() {
 
         // Clean up: delete all sounds in The Money Drop except the intro, the million pound drop timer, PROXIE - Bad Shawty, YOASOBI, ซากกน (사기꾼), Correct/Wrong Dings, and STAY/Seven
         saved = saved.filter(t => t.station !== 'The Money Drop' || t.id === 'md-intro' || t.id === 'md-timer' || t.id === 'md-proxie-bad-shawty' || t.id === 'md-yoasobi' || t.id === 'md-sagikkun' || t.id === 'md-correct-ding' || t.id === 'md-wrong-ding' || t.id === 'md-stay' || t.id === 'md-seven');
+
+        // Clean up: delete all sounds in เกมบันไดงู except Trap 1 & 2, Clue & Clue Gold, Maro Jump, Question BG & Start, Correct/Wrong Dings, and target Stacking Blocks tracks
+        saved = saved.filter(t => t.station !== 'เกมบันไดงู' || t.id === 'sl-trap1' || t.id === 'sl-trap2' || t.id === 'sl-clue' || t.id === 'sl-cluegold' || t.id === 'sl-marojump' || t.id === 'sl-questionbg' || t.id === 'sl-questionstart' || t.id === 'sl-correct-ding' || t.id === 'sl-wrong-ding' || t.id === 'sl-bomb-timer' || t.id === 'sl-phone-sound' || t.id === 'sl-proxie-bad-shawty' || t.id === 'sl-yoasobi' || t.id === 'sl-sagikkun' || t.id === 'sl-stay' || t.id === 'sl-seven');
 
         // Clean up: delete tracks 1-3 if present (Attention Horn, Start Round Whistle, Base Cleared Level Fanfare)
         saved = saved.filter(t => 
@@ -92,6 +96,38 @@ export default function App() {
       console.error('Failed to preserve tracks in browser storage', e);
     }
   }, [tracks]);
+
+  // Master Volume State
+  const [volume, setVolume] = useState<number>(() => {
+    try {
+      const saved = localStorage.getItem('big_game_vfx_master_volume');
+      return saved !== null ? parseFloat(saved) : 0.8;
+    } catch {
+      return 0.8;
+    }
+  });
+  const [prevVolume, setPrevVolume] = useState<number>(0.8);
+
+  // Synchronize master volume to Audio instance
+  useEffect(() => {
+    try {
+      localStorage.setItem('big_game_vfx_master_volume', volume.toString());
+    } catch (e) {
+      console.error('Failed to save volume state', e);
+    }
+    if (audioRef.current) {
+      audioRef.current.volume = volume;
+    }
+  }, [volume]);
+
+  const handleToggleMute = () => {
+    if (volume > 0) {
+      setPrevVolume(volume);
+      setVolume(0);
+    } else {
+      setVolume(prevVolume > 0 ? prevVolume : 0.8);
+    }
+  };
 
   // Handle HTML Audio Lifecycle
   useEffect(() => {
@@ -149,6 +185,7 @@ export default function App() {
         finalUrl = `${cleanBase}${finalUrl}`;
       }
       audioRef.current.src = finalUrl;
+      audioRef.current.volume = volume;
       audioRef.current.load();
       if (isPlaying) {
         audioRef.current.play().catch((err) => {
@@ -292,13 +329,54 @@ export default function App() {
             </div>
           </div>
 
-          {/* Top-right Changer Button */}
-          <button 
-            onClick={handleExitToHome}
-            className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/10 hover:border-white/20 rounded-xl text-xs font-semibold uppercase tracking-tight flex items-center gap-1.5 transition-all shadow-xs active:scale-97 cursor-pointer select-none"
-          >
-            <span>🔄 เปลี่ยนฐาน (คุณเป็น Staff ฐานไหนค้าบ?)</span>
-          </button>
+          {/* Top-right Changer & Volume Area */}
+          <div className="flex items-center gap-4 flex-wrap sm:flex-nowrap">
+            
+            {/* Global Master Volume Slider Block */}
+            <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md border border-white/15 px-4 py-2 rounded-xl text-white shadow-md">
+              <button
+                id="toggle-mute-volume-btn"
+                onClick={handleToggleMute}
+                className="text-white hover:text-indigo-200 transition-colors cursor-pointer flex items-center justify-center"
+                title={volume === 0 ? "Unmute" : "Mute"}
+              >
+                {volume === 0 ? (
+                  <VolumeX className="w-4 h-4 text-rose-350 animate-pulse" />
+                ) : (
+                  <Volume2 className="w-4 h-4 text-emerald-300" />
+                )}
+              </button>
+              
+              <div className="flex flex-col">
+                <span className="text-[9px] font-bold tracking-wider font-mono opacity-60 uppercase leading-none mb-1">
+                  MASTER VOLUME
+                </span>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value={volume}
+                    onChange={(e) => setVolume(parseFloat(e.target.value))}
+                    className="w-24 sm:w-32 h-1 bg-white/20 hover:bg-white/30 rounded-lg appearance-none cursor-pointer accent-white transition-all outline-hidden"
+                  />
+                  <span className="text-[11px] font-mono font-extrabold w-8 text-right text-slate-100 leading-none">
+                    {Math.round(volume * 100)}%
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Top-right Changer Button */}
+            <button 
+              onClick={handleExitToHome}
+              className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/10 hover:border-white/20 rounded-xl text-xs font-semibold uppercase tracking-tight flex items-center gap-1.5 transition-all shadow-xs active:scale-97 cursor-pointer select-none"
+            >
+              <span>🔄 เปลี่ยนฐาน (คุณเป็น Staff ฐานไหนค้าบ?)</span>
+            </button>
+            
+          </div>
           
         </div>
       </header>
