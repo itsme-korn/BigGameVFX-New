@@ -40,8 +40,8 @@ export default function App() {
         // Clean up: delete all sounds in The Money Drop except the intro, the million pound drop timer, PROXIE - Bad Shawty, YOASOBI, ซากกน (사기꾼), Correct/Wrong Dings, and STAY/Seven
         saved = saved.filter(t => t.station !== 'The Money Drop' || t.id === 'md-intro' || t.id === 'md-timer' || t.id === 'md-proxie-bad-shawty' || t.id === 'md-yoasobi' || t.id === 'md-sagikkun' || t.id === 'md-correct-ding' || t.id === 'md-wrong-ding' || t.id === 'md-stay' || t.id === 'md-seven');
 
-        // Clean up: delete all sounds in เกมบันไดงู except Trap 1 & 2, Clue & Clue Gold, Maro Jump, Question BG & Start, Correct/Wrong Dings, and target Stacking Blocks tracks
-        saved = saved.filter(t => t.station !== 'เกมบันไดงู' || t.id === 'sl-trap1' || t.id === 'sl-trap2' || t.id === 'sl-clue' || t.id === 'sl-cluegold' || t.id === 'sl-marojump' || t.id === 'sl-questionbg' || t.id === 'sl-questionstart' || t.id === 'sl-correct-ding' || t.id === 'sl-wrong-ding' || t.id === 'sl-bomb-timer' || t.id === 'sl-phone-sound' || t.id === 'sl-proxie-bad-shawty' || t.id === 'sl-yoasobi' || t.id === 'sl-sagikkun' || t.id === 'sl-stay' || t.id === 'sl-seven');
+        // Clean up: delete all sounds in เกมบันไดงู except Trap 1 & 2, Clue & Clue Gold, Maro Jump, Question BG & Start, Correct/Wrong Dings, target Stacking Blocks tracks, and newly added game assets
+        saved = saved.filter(t => t.station !== 'เกมบันไดงู' || t.id === 'sl-trap1' || t.id === 'sl-trap2' || t.id === 'sl-clue' || t.id === 'sl-cluegold' || t.id === 'sl-marojump' || t.id === 'sl-questionbg' || t.id === 'sl-questionstart' || t.id === 'sl-correct-ding' || t.id === 'sl-wrong-ding' || t.id === 'sl-bomb-timer' || t.id === 'sl-phone-sound' || t.id === 'sl-proxie-bad-shawty' || t.id === 'sl-yoasobi' || t.id === 'sl-sagikkun' || t.id === 'sl-stay' || t.id === 'sl-seven' || t.id === 'sl-aoe1' || t.id === 'sl-crow-sound' || t.id === 'sl-correct-ding2' || t.id === 'sl-laughing-audience' || t.id === 'sl-minute-timer' || t.id === 'sl-start-quiz-bg');
 
         // Clean up: delete tracks 1-3 if present (Attention Horn, Start Round Whistle, Base Cleared Level Fanfare)
         saved = saved.filter(t => 
@@ -82,6 +82,10 @@ export default function App() {
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  // Multi-audio playback states for 'เกมบันไดงู'
+  const [multiPlaybackStates, setMultiPlaybackStates] = useState<Record<string, { isPlaying: boolean; currentTime: number; duration: number }>>({});
+  const activeAudiosRef = useRef<Record<string, HTMLAudioElement>>({});
+
   // Keep reference to avoid stale closures in core stream event listeners
   const activeTrackRef = useRef<AudioTrack | null>(null);
   useEffect(() => {
@@ -108,7 +112,7 @@ export default function App() {
   });
   const [prevVolume, setPrevVolume] = useState<number>(0.8);
 
-  // Synchronize master volume to Audio instance
+  // Synchronize master volume to Audio instances
   useEffect(() => {
     try {
       localStorage.setItem('big_game_vfx_master_volume', volume.toString());
@@ -118,6 +122,12 @@ export default function App() {
     if (audioRef.current) {
       audioRef.current.volume = volume;
     }
+    // Synchronize to multi-audios
+    (Object.values(activeAudiosRef.current) as HTMLAudioElement[]).forEach((aud) => {
+      if (aud) {
+        aud.volume = volume;
+      }
+    });
   }, [volume]);
 
   const handleToggleMute = () => {
@@ -169,6 +179,11 @@ export default function App() {
       audio.removeEventListener('loadedmetadata', onLoadedMetadata);
       audio.removeEventListener('ended', onAudioEnded);
       audio.removeEventListener('error', onAudioError);
+
+      // Clean up multi-audios
+      (Object.values(activeAudiosRef.current) as HTMLAudioElement[]).forEach((aud) => {
+        if (aud) aud.pause();
+      });
     };
   }, []);
 
@@ -203,6 +218,110 @@ export default function App() {
 
   // Audio Play controls
   const handlePlayPauseToggle = (track: AudioTrack) => {
+    if (selectedStation === 'เกมบันไดงู') {
+      let aud = activeAudiosRef.current[track.id];
+      const isCurrentlyPlaying = multiPlaybackStates[track.id]?.isPlaying || false;
+
+      if (isCurrentlyPlaying) {
+        if (aud) {
+          aud.pause();
+        }
+        setMultiPlaybackStates(prev => ({
+          ...prev,
+          [track.id]: {
+            ...(prev[track.id] || { currentTime: 0, duration: track.durationSeconds }),
+            isPlaying: false
+          }
+        }));
+      } else {
+        if (!aud) {
+          aud = new Audio();
+          let finalUrl = track.url;
+          if (finalUrl.startsWith('/') && !finalUrl.startsWith('//')) {
+            const baseUrl = (import.meta as any).env?.BASE_URL || '/';
+            const cleanBase = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+            finalUrl = `${cleanBase}${finalUrl}`;
+          }
+          aud.src = finalUrl;
+          aud.volume = volume;
+          
+          aud.addEventListener('timeupdate', () => {
+            setMultiPlaybackStates(prev => {
+              if (!prev[track.id]) return prev;
+              return {
+                ...prev,
+                [track.id]: {
+                  ...prev[track.id],
+                  currentTime: aud.currentTime
+                }
+              };
+            });
+          });
+          
+          aud.addEventListener('loadedmetadata', () => {
+            setMultiPlaybackStates(prev => {
+              const current = prev[track.id] || { isPlaying: false, currentTime: 0, duration: track.durationSeconds };
+              return {
+                ...prev,
+                [track.id]: {
+                  ...current,
+                  duration: aud.duration || track.durationSeconds
+                }
+              };
+            });
+          });
+          
+          aud.addEventListener('ended', () => {
+            setMultiPlaybackStates(prev => {
+              if (!prev[track.id]) return prev;
+              return {
+                ...prev,
+                [track.id]: {
+                  ...prev[track.id],
+                  isPlaying: false,
+                  currentTime: 0
+                }
+              };
+            });
+          });
+          
+          aud.addEventListener('error', (e) => {
+            console.warn('Playback error caught:', e);
+            setMultiPlaybackStates(prev => {
+              if (!prev[track.id]) return prev;
+              return {
+                ...prev,
+                [track.id]: {
+                  ...prev[track.id],
+                  isPlaying: false
+                }
+              };
+            });
+            setAudioError(`Playback failed for ${track.title}.`);
+          });
+
+          activeAudiosRef.current[track.id] = aud;
+        }
+
+        aud.play().catch((err) => {
+          console.error('Multi playback error:', err);
+          setAudioError(`Failed to play ${track.title}. Please verify CORS permissions or that the asset is loaded.`);
+        });
+
+        setMultiPlaybackStates(prev => {
+          const current = prev[track.id] || { isPlaying: false, currentTime: 0, duration: track.durationSeconds };
+          return {
+            ...prev,
+            [track.id]: {
+              ...current,
+              isPlaying: true
+            }
+          };
+        });
+      }
+      return;
+    }
+
     if (!audioRef.current) return;
 
     if (activeTrack?.id === track.id) {
@@ -223,6 +342,101 @@ export default function App() {
   };
 
   const handleSeek = (track: AudioTrack, time: number) => {
+    if (selectedStation === 'เกมบันไดงู') {
+      let aud = activeAudiosRef.current[track.id];
+      if (aud) {
+        aud.currentTime = time;
+        setMultiPlaybackStates(prev => {
+          if (!prev[track.id]) return prev;
+          return {
+            ...prev,
+            [track.id]: {
+              ...prev[track.id],
+              currentTime: time
+            }
+          };
+        });
+      } else {
+        // Create audio instance paused if they scrubbed before first play
+        aud = new Audio();
+        let finalUrl = track.url;
+        if (finalUrl.startsWith('/') && !finalUrl.startsWith('//')) {
+          const baseUrl = (import.meta as any).env?.BASE_URL || '/';
+          const cleanBase = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+          finalUrl = `${cleanBase}${finalUrl}`;
+        }
+        aud.src = finalUrl;
+        aud.volume = volume;
+        
+        aud.addEventListener('timeupdate', () => {
+          setMultiPlaybackStates(prev => {
+            if (!prev[track.id]) return prev;
+            return {
+              ...prev,
+              [track.id]: {
+                ...prev[track.id],
+                currentTime: aud.currentTime
+              }
+            };
+          });
+        });
+        
+        aud.addEventListener('loadedmetadata', () => {
+          setMultiPlaybackStates(prev => {
+            const current = prev[track.id] || { isPlaying: false, currentTime: 0, duration: track.durationSeconds };
+            return {
+              ...prev,
+              [track.id]: {
+                ...current,
+                duration: aud.duration || track.durationSeconds
+              }
+            };
+          });
+        });
+        
+        aud.addEventListener('ended', () => {
+          setMultiPlaybackStates(prev => {
+            if (!prev[track.id]) return prev;
+            return {
+              ...prev,
+              [track.id]: {
+                ...prev[track.id],
+                isPlaying: false,
+                currentTime: 0
+              }
+            };
+          });
+        });
+        
+        aud.addEventListener('error', (e) => {
+          console.warn('Playback error caught:', e);
+          setMultiPlaybackStates(prev => {
+            if (!prev[track.id]) return prev;
+            return {
+              ...prev,
+              [track.id]: {
+                ...prev[track.id],
+                isPlaying: false
+              }
+            };
+          });
+          setAudioError(`Playback failed for ${track.title}.`);
+        });
+
+        activeAudiosRef.current[track.id] = aud;
+        aud.currentTime = time;
+        setMultiPlaybackStates(prev => ({
+          ...prev,
+          [track.id]: {
+            isPlaying: false,
+            currentTime: time,
+            duration: track.durationSeconds
+          }
+        }));
+      }
+      return;
+    }
+
     if (!audioRef.current) return;
     
     if (activeTrack?.id === track.id) {
@@ -253,6 +467,17 @@ export default function App() {
       setActiveTrack(null);
       setIsPlaying(false);
     }
+    // STOP multi play if active
+    const aud = activeAudiosRef.current[trackId];
+    if (aud) {
+      aud.pause();
+      delete activeAudiosRef.current[trackId];
+    }
+    setMultiPlaybackStates((prev) => {
+      const next = { ...prev };
+      delete next[trackId];
+      return next;
+    });
     setTracks((prev) => prev.filter((t) => t.id !== trackId));
   };
 
@@ -261,6 +486,12 @@ export default function App() {
       if (audioRef.current) {
         audioRef.current.pause();
       }
+      (Object.values(activeAudiosRef.current) as HTMLAudioElement[]).forEach((aud) => {
+        if (aud) aud.pause();
+      });
+      activeAudiosRef.current = {};
+      setMultiPlaybackStates({});
+
       setActiveTrack(null);
       setIsPlaying(false);
       setTracks(INITIAL_TRACKS);
@@ -273,6 +504,12 @@ export default function App() {
     if (audioRef.current) {
       audioRef.current.pause();
     }
+    (Object.values(activeAudiosRef.current) as HTMLAudioElement[]).forEach((aud) => {
+      if (aud) aud.pause();
+    });
+    activeAudiosRef.current = {};
+    setMultiPlaybackStates({});
+
     setActiveTrack(null);
     setIsPlaying(false);
     setSelectedStation(null);
@@ -400,13 +637,24 @@ export default function App() {
                 <ArrowLeft className="w-4 h-4" />
               </button>
               
-              <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight font-display">
-                Game VFX Audio Library
+              <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight font-display flex flex-wrap items-center gap-2">
+                <span>ฐาน: {selectedStation === 'all' ? 'Master Console' : selectedStation}</span>
+                {selectedStation === 'เกมบันไดงู' && (
+                  <span className="text-[10px] sm:text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-3 py-1 rounded-full uppercase animate-pulse">
+                    🟢 Multi-Play Mode
+                  </span>
+                )}
               </h1>
             </div>
             
-            <p className="text-slate-400 text-sm mt-1 max-w-2xl leading-relaxed">
-              Play high-fidelity assets directly in your web browser. Double click or tap on elements instantly. 
+            <p className="text-slate-400 text-sm mt-2 max-w-2xl leading-relaxed">
+              {selectedStation === 'เกมบันไดงู' ? (
+                <span className="text-emerald-450 font-semibold font-sans flex items-center gap-1.5">
+                  ✨ MULTI-SOUND OVERLAY ACTIVE: Play, mix, and layer multiple sounds simultaneously!
+                </span>
+              ) : (
+                'Play high-fidelity assets directly in your web browser. Double click or tap on elements instantly.'
+              )}
             </p>
           </div>
 
@@ -476,19 +724,32 @@ export default function App() {
             {/* Track entries rows list */}
             {finalFilteredTracks.length > 0 ? (
               <div className="space-y-3.5" id="audio-tracks-rendered-wrapper">
-                {finalFilteredTracks.map((track, i) => (
-                  <AudioPlayer
-                    key={track.id}
-                    index={i + 1}
-                    track={track}
-                    isPlaying={isPlaying && activeTrack?.id === track.id}
-                    currentTime={activeTrack?.id === track.id ? currentTime : 0}
-                    duration={activeTrack?.id === track.id ? duration : track.durationSeconds}
-                    onPlayPauseToggle={handlePlayPauseToggle}
-                    onSeek={handleSeek}
-                    onDeleteTrack={handleDeleteTrack}
-                  />
-                ))}
+                {finalFilteredTracks.map((track, i) => {
+                  const isMultiMode = selectedStation === 'เกมบันไดงู';
+                  const isTrackPlaying = isMultiMode
+                    ? (multiPlaybackStates[track.id]?.isPlaying || false)
+                    : (isPlaying && activeTrack?.id === track.id);
+                  const trackCurrentTime = isMultiMode
+                    ? (multiPlaybackStates[track.id]?.currentTime || 0)
+                    : (activeTrack?.id === track.id ? currentTime : 0);
+                  const trackDuration = isMultiMode
+                    ? (multiPlaybackStates[track.id]?.duration || track.durationSeconds)
+                    : (activeTrack?.id === track.id ? duration : track.durationSeconds);
+
+                  return (
+                    <AudioPlayer
+                      key={track.id}
+                      index={i + 1}
+                      track={track}
+                      isPlaying={isTrackPlaying}
+                      currentTime={trackCurrentTime}
+                      duration={trackDuration}
+                      onPlayPauseToggle={handlePlayPauseToggle}
+                      onSeek={handleSeek}
+                      onDeleteTrack={handleDeleteTrack}
+                    />
+                  );
+                })}
               </div>
             ) : (
               <div className="bg-white border border-slate-100 rounded-2xl p-12 text-center shadow-xs">

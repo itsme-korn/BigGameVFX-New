@@ -345,5 +345,65 @@ export const INITIAL_TRACKS: AudioTrack[] = [
     station: 'เกมบันไดงู',
     category: 'Morning Game',
     tags: ['Music', 'Song', 'Pop']
+  },
+  {
+    id: 'sl-aoe1',
+    title: 'เอ๋อ 1 (Fail Sound)',
+    duration: '00:02',
+    durationSeconds: 2,
+    url: '/เอ๋อ1.mp3',
+    station: 'เกมบันไดงู',
+    category: 'Morning Game',
+    tags: ['SFX', 'Meme', 'Fail']
+  },
+  {
+    id: 'sl-crow-sound',
+    title: 'Effect เสียงกา (Crow Sound)',
+    duration: '00:04',
+    durationSeconds: 4,
+    url: '/Effect เสยงกา.mp3',
+    station: 'เกมบันไดงู',
+    category: 'Morning Game',
+    tags: ['SFX', 'Crow', 'Silence', 'Meme']
+  },
+  {
+    id: 'sl-correct-ding2',
+    title: 'Correct Ding 2',
+    duration: '00:02',
+    durationSeconds: 2,
+    url: '/Correct Ding2.mp3',
+    station: 'เกมบันไดงู',
+    category: 'Morning Game',
+    tags: ['SFX', 'Ding', 'Correct']
+  },
+  {
+    id: 'sl-laughing-audience',
+    title: 'Laughing Audience Sound Effect',
+    duration: '00:06',
+    durationSeconds: 6,
+    url: '/Laughing Audience Sound Effect.mp3',
+    station: 'เกมบันไดงู',
+    category: 'Morning Game',
+    tags: ['SFX', 'Laugh', 'Audience', 'Meme']
+  },
+  {
+    id: 'sl-minute-timer',
+    title: 'Minute To Win It Timer (Version 9)',
+    duration: '01:00',
+    durationSeconds: 60,
+    url: '/Minute To Win It Timer - Version 9 #26.mp3',
+    station: 'เกมบันไดงู',
+    category: 'Morning Game',
+    tags: ['Timer', 'Ticking', 'Suspense']
+  },
+  {
+    id: 'sl-start-quiz-bg',
+    title: 'เริ่มเล่นเกมตอบคำถาม (0.28-0.50)',
+    duration: '00:22',
+    durationSeconds: 22,
+    url: '/เริ่มเล่นเกมตอบคำถาม 0.28-0.50.mp3',
+    station: 'เกมบันไดงู',
+    category: 'Morning Game',
+    tags: ['SFX', 'Intro', 'Start', 'Quiz']
   }
 ];
